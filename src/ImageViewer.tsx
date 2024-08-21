@@ -1,5 +1,15 @@
-import { DragEventHandler, ReactNode, useRef, useState } from "react";
+import {
+  DragEventHandler,
+  EventHandler,
+  MouseEventHandler,
+  ReactNode,
+  TouchEventHandler,
+  useRef,
+  useState,
+} from "react";
 import useClickOutside from "./hooks/useClickOutside";
+
+const DEFAULT_MAX_ZOOM_LEVEL = 2;
 
 function ImageViewer({ children }: { children: ReactNode }) {
   const [isShowButton, setIsShowButton] = useState(false);
@@ -42,7 +52,7 @@ function ImageViewer({ children }: { children: ReactNode }) {
         {children}
       </div>
       {isShowFullScreen && (
-        <FullScreenViewer imageZoomRef={imageZoomRef}>
+        <FullScreenViewer imageZoomRef={imageZoomRef} maxZoomLevel={2}>
           {children}
         </FullScreenViewer>
       )}
@@ -53,16 +63,19 @@ function ImageViewer({ children }: { children: ReactNode }) {
 const FullScreenViewer = ({
   children,
   imageZoomRef,
+  maxZoomLevel = DEFAULT_MAX_ZOOM_LEVEL,
 }: {
   children: ReactNode;
   imageZoomRef: React.MutableRefObject<null>;
+  maxZoomLevel: number;
 }) => {
   const middlePoint = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
   const [currentPoint, setCurrentPoint] = useState(middlePoint);
   const [initDrag, setInitDrag] = useState({ x: 0, y: 0 });
   const [currentOffset, setCurrentOffset] = useState({ x: 0, y: 0 }); // offset from first drag
+  const [zoomLevel, setZoomLevel] = useState(1);
 
-  const handleDragStart: DragEventHandler = (e) => {
+  const handleDragStart = (e) => {
     // get first drag
     setInitDrag({
       x: e.clientX,
@@ -75,7 +88,7 @@ const FullScreenViewer = ({
       "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=";
     e.dataTransfer.setDragImage(img, 0, 0);
   };
-  const handleDrag: DragEventHandler = (e) => {
+  const handleDrag = (e) => {
     if (e.clientX + e.clientY > 0) {
       const newCurrentOffset = {
         x: e.clientX - initDrag.x,
@@ -100,6 +113,12 @@ const FullScreenViewer = ({
     }
   };
 
+  // 2 level zoom
+  const handleZoom: React.MouseEventHandler = (e) => {
+    if (zoomLevel !== maxZoomLevel) setZoomLevel(maxZoomLevel);
+    else setZoomLevel(1);
+  };
+
   return (
     <div
       style={{
@@ -117,15 +136,21 @@ const FullScreenViewer = ({
       }}
     >
       <div
+        draggable
         ref={imageZoomRef}
         onDragStart={handleDragStart}
         onDrag={handleDrag}
+        onTouchStart={handleDragStart}
+        onTouchMove={handleDrag}
         style={{
           display: "flex",
           position: "relative",
           left: `${currentPoint.x - middlePoint.x}px`,
           top: `${currentPoint.y - middlePoint.y}px`,
+          cursor: zoomLevel < maxZoomLevel ? "zoom-in" : "zoom-out",
+          zoom: zoomLevel,
         }}
+        onClick={handleZoom}
       >
         {children}
       </div>
