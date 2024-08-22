@@ -1,19 +1,10 @@
-import {
-  DragEventHandler,
-  EventHandler,
-  MouseEventHandler,
-  ReactNode,
-  TouchEventHandler,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { useEffect, useRef, useState } from "react";
 import useClickOutside from "./hooks/useClickOutside";
 import PinchZoom from "./components/pinch-zoom";
 
 const DEFAULT_MAX_ZOOM_LEVEL = 2;
 
-function ImageViewer({ children }: { children: ReactNode }) {
+function ImageViewer({ children }: { children: React.ReactNode }) {
   const [isShowButton, setIsShowButton] = useState(false);
   const [isShowFullScreen, setIsShowFullScreen] = useState(false);
   const imageZoomRef = useRef(null);
@@ -54,7 +45,9 @@ function ImageViewer({ children }: { children: ReactNode }) {
         {children}
       </div>
       {isShowFullScreen && (
-        <FullScreenViewer imageZoomRef={imageZoomRef} maxZoomLevel={2}>
+        <FullScreenViewer
+          {...{ imageZoomRef, maxZoomLevel: 2, setIsShowFullScreen }}
+        >
           {children}
         </FullScreenViewer>
       )}
@@ -66,10 +59,12 @@ const FullScreenViewer = ({
   children,
   imageZoomRef,
   maxZoomLevel = DEFAULT_MAX_ZOOM_LEVEL,
+  setIsShowFullScreen,
 }: {
-  children: ReactNode;
+  children: React.ReactNode;
   imageZoomRef: React.MutableRefObject<null>;
   maxZoomLevel: number;
+  setIsShowFullScreen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const middlePoint = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
   const [currentPoint, setCurrentPoint] = useState(middlePoint);
@@ -147,9 +142,17 @@ const FullScreenViewer = ({
       {isMobile ? (
         <div
           className="my_wrapper"
-          style={{ width: "80vw", height: "80vh" }}
+          style={{ width: "100vw", height: "80vh" }}
           ref={imageZoomRef}
         >
+          <button
+            style={{ position: "absolute", right: 0, top: 0, zIndex: 1 }}
+            onClick={() => {
+              setIsShowFullScreen(false);
+            }}
+          >
+            x
+          </button>
           <div
             className="pinch-zoom"
             style={{
