@@ -19,7 +19,7 @@ function ImagePincher({
   return (
     <div
       className="my_wrapper"
-      style={{ width: "100vw", height: "80vh" }}
+      style={{ width: "100vw", height: "100vh" }}
       ref={imageZoomRef}
     >
       <button
