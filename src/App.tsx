@@ -1,4 +1,4 @@
-import ImageViewer from "./ImageViewer";
+import ImageViewer from "./components/ImageViewer/ImageViewer";
 
 function App() {
   return (
