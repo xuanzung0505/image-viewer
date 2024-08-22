@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import PinchZoom from "../PinchZoom/pinch-zoom";
+import PinchZoom from "../PinchZoom/pinch-zoom.min";
 
 function ImagePincher({
   children,
