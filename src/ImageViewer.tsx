@@ -4,10 +4,12 @@ import {
   MouseEventHandler,
   ReactNode,
   TouchEventHandler,
+  useEffect,
   useRef,
   useState,
 } from "react";
 import useClickOutside from "./hooks/useClickOutside";
+import PinchZoom from "./components/pinch-zoom";
 
 const DEFAULT_MAX_ZOOM_LEVEL = 2;
 
@@ -74,6 +76,8 @@ const FullScreenViewer = ({
   const [initDrag, setInitDrag] = useState({ x: 0, y: 0 });
   const [currentOffset, setCurrentOffset] = useState({ x: 0, y: 0 }); // offset from first drag
   const [zoomLevel, setZoomLevel] = useState(1);
+  const pinchZoomRef = useRef(null);
+  const isMobile = true;
 
   const handleDragStart = (e) => {
     // get first drag
@@ -119,6 +123,11 @@ const FullScreenViewer = ({
     else setZoomLevel(1);
   };
 
+  useEffect(() => {
+    if (isMobile && pinchZoomRef.current)
+      new PinchZoom(pinchZoomRef.current, {});
+  }, [isMobile]);
+
   return (
     <div
       style={{
@@ -135,25 +144,44 @@ const FullScreenViewer = ({
         alignItems: "center",
       }}
     >
-      <div
-        draggable
-        ref={imageZoomRef}
-        onDragStart={handleDragStart}
-        onDrag={handleDrag}
-        onTouchStart={handleDragStart}
-        onTouchMove={handleDrag}
-        style={{
-          display: "flex",
-          position: "relative",
-          left: `${currentPoint.x - middlePoint.x}px`,
-          top: `${currentPoint.y - middlePoint.y}px`,
-          cursor: zoomLevel < maxZoomLevel ? "zoom-in" : "zoom-out",
-          zoom: zoomLevel,
-        }}
-        onClick={handleZoom}
-      >
-        {children}
-      </div>
+      {isMobile ? (
+        <div
+          className="my_wrapper"
+          style={{ width: "80vw", height: "80vh" }}
+          ref={imageZoomRef}
+        >
+          <div
+            className="pinch-zoom"
+            style={{
+              display: "flex",
+              position: "relative",
+            }}
+            ref={pinchZoomRef}
+          >
+            {children}
+          </div>
+        </div>
+      ) : (
+        <div
+          draggable
+          ref={imageZoomRef}
+          onDragStart={handleDragStart}
+          onDrag={handleDrag}
+          onTouchStart={handleDragStart}
+          onTouchMove={handleDrag}
+          style={{
+            display: "flex",
+            position: "relative",
+            left: `${currentPoint.x - middlePoint.x}px`,
+            top: `${currentPoint.y - middlePoint.y}px`,
+            cursor: zoomLevel < maxZoomLevel ? "zoom-in" : "zoom-out",
+            zoom: zoomLevel,
+          }}
+          onClick={handleZoom}
+        >
+          {children}
+        </div>
+      )}
     </div>
   );
 };
