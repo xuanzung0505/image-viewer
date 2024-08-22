@@ -84,7 +84,7 @@ function ImageDragger({
         left: `${currentPoint.x - middlePoint.x}px`,
         top: `${currentPoint.y - middlePoint.y}px`,
         cursor: zoomLevel < maxZoomLevel ? "zoom-in" : "zoom-out",
-        zoom: zoomLevel,
+        transform: `scale(${zoomLevel})`,
       }}
       onClick={handleZoom}
     >
