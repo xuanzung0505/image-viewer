@@ -13,7 +13,12 @@ function ImagePincher({
   const pinchZoomRef = useRef(null);
 
   useEffect(() => {
-    if (pinchZoomRef.current) new PinchZoom(pinchZoomRef.current, {});
+    if (pinchZoomRef.current) {
+      const pinchZoom = new PinchZoom(pinchZoomRef.current, {});
+      return () => {
+        pinchZoom.destroy();
+      };
+    }
   }, []);
 
   return (
