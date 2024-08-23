@@ -41,7 +41,7 @@ const FullScreenViewer = ({
   maxZoomLevel: number;
   setIsShowFullScreen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const isMobile = true;
+  const isMobile = false;
 
   return (
     <div
