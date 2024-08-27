@@ -641,9 +641,9 @@ var definePinchZoom = function () {
             this.el.parentNode.insertBefore(this.container, this.el);
             this.container.appendChild(this.el);
 
-            this.container.style.overflow = 'hidden';
+            this.container.style.overflow = 'visible';
             this.container.style.position = 'relative';
-
+            this.container.style.flex = "0 0 100%";
             this.el.style.webkitTransformOrigin = '0% 0%';
             this.el.style.mozTransformOrigin = '0% 0%';
             this.el.style.msTransformOrigin = '0% 0%';
@@ -698,7 +698,7 @@ var definePinchZoom = function () {
 
             window.setTimeout((function () {
                 this.updatePlanned = false;
-
+                console.log(this.container.style.height);
                 var zoomFactor = this.getInitialZoomFactor() * this.zoomFactor,
                     offsetX = -this.offset.x / zoomFactor,
                     offsetY = -this.offset.y / zoomFactor,

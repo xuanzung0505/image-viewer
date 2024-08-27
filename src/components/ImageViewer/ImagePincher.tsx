@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from "react";
-import PinchZoom from "../PinchZoom/pinch-zoom.min";
+import React, { useEffect, useRef, useState } from "react";
+import PinchZoom from "../PinchZoom/pinch-zoom";
 
 function ImagePincher({
   children,
@@ -11,20 +11,28 @@ function ImagePincher({
   setIsShowFullScreen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const pinchZoomRef = useRef(null);
+  const pinchZoomInstance = useRef(null);
+  const [viewerHeight, setViewerHeight] = useState(0);
 
   useEffect(() => {
-    if (pinchZoomRef.current) {
-      const pinchZoom = new PinchZoom(pinchZoomRef.current, {});
-      return () => {
-        pinchZoom.destroy();
-      };
+    if (pinchZoomRef.current && !pinchZoomInstance.current) {
+      pinchZoomInstance.current = new PinchZoom(pinchZoomRef.current, {
+        draggableUnzoomed: false,
+      });
+      const viewerHeight = pinchZoomRef.current?.getBoundingClientRect().height;
+      setViewerHeight(viewerHeight);
     }
   }, []);
 
   return (
     <div
       className="my_wrapper"
-      style={{ width: "100vw", height: "100vh" }}
+      style={{
+        width: "100vw",
+        height: viewerHeight > 0 ? viewerHeight : "80vh",
+        display: "flex",
+        alignItems: "center",
+      }}
       ref={imageZoomRef}
     >
       <button
