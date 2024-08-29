@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import PinchZoom from "../PinchZoom/pinch-zoom";
 
 function ImagePincher({
@@ -12,15 +12,12 @@ function ImagePincher({
 }) {
   const pinchZoomRef = useRef(null);
   const pinchZoomInstance = useRef(null);
-  const [viewerHeight, setViewerHeight] = useState(0);
 
   useEffect(() => {
     if (pinchZoomRef.current && !pinchZoomInstance.current) {
       pinchZoomInstance.current = new PinchZoom(pinchZoomRef.current, {
         draggableUnzoomed: false,
       });
-      const viewerHeight = pinchZoomRef.current?.getBoundingClientRect().height;
-      setViewerHeight(viewerHeight);
     }
   }, []);
 
@@ -29,7 +26,7 @@ function ImagePincher({
       className="my_wrapper"
       style={{
         width: "100vw",
-        height: viewerHeight > 0 ? viewerHeight : "80vh",
+        height: "25vh",
         display: "flex",
         alignItems: "center",
       }}
